@@ -9,10 +9,12 @@ export default function AuthSplash() {
   async function sendMagicLink() {
     setLoading(true);
     setMessage(null);
-    const { error } = await supabase.auth.signInWithOtp({ email });
+    // Ensure the magic link redirects back to the current origin (production or preview)
+    const redirectTo = window.location.origin;
+    const { error } = await supabase.auth.signInWithOtp({ email }, { redirectTo });
     setLoading(false);
     if (error) setMessage(error.message);
-    else setMessage('Magic link sent — check your email.');
+    else setMessage('Magic link sent — check your email. The link will return you to this site.');
   }
 
   return (
