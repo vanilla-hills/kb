@@ -23,6 +23,8 @@ import {
   Wrench,
   X,
 } from "lucide-react";
+import { supabase, getProfile } from "@/lib/supabase";
+import AuthSplash from "@/components/AuthSplash";
 
 const slugify = (s) =>
   String(s)
@@ -31,15 +33,55 @@ const slugify = (s) =>
     .replace(/(^-|-$)/g, "");
 
 export default function KnowledgeBaseDashboard() {
-  // ---------- AUTH PLACEHOLDERS (WIRED TO BACKEND LATER) ----------
-  const currentUser = {
-    name: "Staff User",
-    email: "staff@example.com",
-    role: "staff", // "client" | "staff" | "admin"
-  };
+  // ---------- AUTH (Supabase) ----------
+  const [authUser, setAuthUser] = useState(null);
+  const [profile, setProfileState] = useState(null);
 
-  const canEdit = currentUser.role === "staff" || currentUser.role === "admin";
+  const currentUser = useMemo(() => {
+    if (!authUser) return null;
+    return {
+      name: authUser.user_metadata?.full_name || authUser.email || 'User',
+      email: authUser.email,
+      role: profile?.role || 'guest',
+    };
+  }, [authUser, profile]);
+
+  const canEdit = currentUser?.role === 'user' || currentUser?.role === 'admin';
   const makeId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      const { data } = await supabase.auth.getSession();
+      const session = data?.session;
+      if (!mounted) return;
+      setAuthUser(session?.user ?? null);
+      if (session?.user) {
+        const p = await getProfile(session.user.id);
+        if (mounted) setProfileState(p);
+      }
+    }
+    load();
+
+    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setAuthUser(session?.user ?? null);
+      if (session?.user) {
+        const p = await getProfile(session.user.id);
+        setProfileState(p);
+      } else {
+        setProfileState(null);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      try {
+        listener?.subscription?.unsubscribe();
+      } catch (e) {}
+    };
+  }, []);
+
+  if (!authUser) return <AuthSplash />;
 
   // ---------- NAV ----------
   const navItems = [

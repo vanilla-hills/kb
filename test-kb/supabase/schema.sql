@@ -13,7 +13,7 @@ create extension if not exists pgcrypto;
 
 -- ---------- Roles ----------
 DO $$ BEGIN
-  CREATE TYPE public.app_role AS ENUM ('guest', 'user', 'admin');
+  CREATE TYPE public.app_role AS ENUM ('user', 'admin');
 EXCEPTION
   WHEN duplicate_object THEN NULL;
 END $$;
@@ -24,9 +24,8 @@ LANGUAGE sql
 IMMUTABLE
 AS $$
   SELECT CASE r
-    WHEN 'guest' THEN 0
-    WHEN 'user'  THEN 1
-    WHEN 'admin' THEN 2
+    WHEN 'user'  THEN 0
+    WHEN 'admin' THEN 1
   END;
 $$;
 
@@ -101,8 +100,8 @@ CREATE TABLE IF NOT EXISTS public.kb_categories (
   name text NOT NULL,
   slug text NOT NULL UNIQUE,
   sort_order int NOT NULL DEFAULT 0,
-  -- Who can VIEW this category (guest/user/admin)
-  min_role public.app_role NOT NULL DEFAULT 'guest',
+  -- Who can VIEW this category (user/admin)
+  min_role public.app_role NOT NULL DEFAULT 'user',
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
@@ -117,7 +116,7 @@ CREATE TABLE IF NOT EXISTS public.kb_topics (
   -- Store structured content (sections/subsections/etc)
   content jsonb NOT NULL DEFAULT '{}'::jsonb,
   -- Who can VIEW this topic/card
-  min_role public.app_role NOT NULL DEFAULT 'guest',
+  min_role public.app_role NOT NULL DEFAULT 'user',
   created_by uuid DEFAULT auth.uid(),
   updated_at timestamptz NOT NULL DEFAULT now(),
   created_at timestamptz NOT NULL DEFAULT now()
