@@ -30,7 +30,14 @@ AS $$
   END;
 $$;
 
--- Convenience helper
+-- ---------- Profiles (role storage) ----------
+CREATE TABLE IF NOT EXISTS public.profiles (
+  id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  role public.app_role NOT NULL DEFAULT 'user',
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- Convenience helper (depends on profiles existing)
 CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS boolean
 LANGUAGE sql
@@ -42,13 +49,6 @@ AS $$
     WHERE p.id = auth.uid() AND p.role = 'admin'
   );
 $$;
-
--- ---------- Profiles (role storage) ----------
-CREATE TABLE IF NOT EXISTS public.profiles (
-  id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  role public.app_role NOT NULL DEFAULT 'user',
-  created_at timestamptz NOT NULL DEFAULT now()
-);
 
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
