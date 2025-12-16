@@ -87,6 +87,46 @@ Cloudflare will build and deploy the static output.
 
 ---
 
+## Supabase (Auth + Database)
+
+This app is designed to use **Supabase Auth** (magic link + a password-based guest account) and a Supabase Postgres database.
+
+### 1) Create tables + RLS policies
+
+In the Supabase dashboard:
+
+- Go to **SQL Editor**
+- Paste and run the contents of `test-kb/supabase/schema.sql`
+
+That script creates:
+
+- `profiles` (stores user role: `guest` | `user` | `admin`)
+- `kb_categories` (left-nav sections)
+- `kb_topics` (cards inside categories)
+
+Access rules are enforced by Postgres **RLS**.
+
+### 2) Environment variables
+
+Create `test-kb/.env` locally:
+
+```bash
+VITE_SUPABASE_URL=...your supabase project url...
+VITE_SUPABASE_ANON_KEY=...your anon public key...
+```
+
+In Cloudflare Pages, add the same variables under:
+
+Project → Settings → Environment variables
+
+### 3) Roles (guest restrictions)
+
+- Guests can only view/search categories/topics where `min_role = 'guest'`.
+- Admins can restrict a category/topic by setting `min_role = 'user'`.
+- Guests cannot create/edit content; admin and user can edit topics/cards.
+
+---
+
 ## Troubleshooting
 
 ### “Missing script: dev”
