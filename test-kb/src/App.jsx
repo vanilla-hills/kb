@@ -52,8 +52,20 @@ export default function KnowledgeBaseDashboard() {
   useEffect(() => {
     let mounted = true;
     async function load() {
-      const { data } = await supabase.auth.getSession();
-      const session = data?.session;
+      // If the user returned from a magic-link redirect, attempt to parse
+      // the auth session from the URL first so the client has the session.
+      let session = null;
+      try {
+        const { data: urlData } = await supabase.auth.getSessionFromUrl();
+        session = urlData?.session ?? null;
+      } catch (e) {
+        // no session in URL — continue
+      }
+
+      if (!session) {
+        const { data } = await supabase.auth.getSession();
+        session = data?.session;
+      }
       if (!mounted) return;
       setAuthUser(session?.user ?? null);
       if (session?.user) {
