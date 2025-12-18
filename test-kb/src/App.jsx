@@ -529,8 +529,18 @@ export default function KnowledgeBaseDashboard() {
     [ensureArticle, setSelectionAndScroll]
   );
 
-  const handleCardClick = (title) => {
+  const handleCardClick = (e, title) => {
     if (editOpen) return;
+
+    // If the user is selecting text inside the card, don't toggle the card.
+    // This allows highlight + copy without the card collapsing on mouseup.
+    try {
+      const sel = window.getSelection?.();
+      if (sel && sel.toString().trim().length > 0) return;
+    } catch (_err) {
+      // ignore
+    }
+
     ensureArticle(title);
     setExpandedCard((prev) => (prev === title ? null : title));
     setSelectionAndScroll(title, null, false);
@@ -1721,7 +1731,7 @@ export default function KnowledgeBaseDashboard() {
                     className={`group transition rounded-2xl shadow-md cursor-pointer border ${
                       isSelected ? "border-slate-700" : "border-transparent"
                     } bg-slate-800 hover:bg-slate-700`}
-                    onClick={() => handleCardClick(c.title)}
+                    onClick={(e) => handleCardClick(e, c.title)}
                   >
                     <CardContent className="p-4 flex flex-col gap-3">
                       <div className="flex justify-between items-start gap-2">
