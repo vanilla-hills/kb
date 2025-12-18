@@ -454,8 +454,6 @@ export default function KnowledgeBaseDashboard() {
       setContentByTitle((prev) => ({
         ...prev,
         [title]: {
-          title,
-          intro: "(Add an intro)",
           sections: [{ heading: "Overview", body: "(Add content)", subsections: [] }],
         },
       }));
@@ -591,8 +589,6 @@ export default function KnowledgeBaseDashboard() {
     setContentByTitle((prev) => ({
       ...prev,
       [title]: {
-        title,
-        intro: "(Add an intro)",
         sections: [{ heading: "Overview", body: "(Add content)", subsections: [] }],
       },
     }));
@@ -619,7 +615,6 @@ export default function KnowledgeBaseDashboard() {
       art ??
       ({
         title,
-        intro: "(Add an intro)",
         sections: [{ heading: "Overview", body: "(Add content)", subsections: [] }],
       });
 
@@ -628,8 +623,6 @@ export default function KnowledgeBaseDashboard() {
     setEditDraft({
       cardTitle: card.title,
       description: card.description,
-      articleTitle: safeArt.title,
-      intro: safeArt.intro,
       sections: (safeArt.sections ?? []).map((s) => ({
         heading: s.heading,
         body: s.body,
@@ -655,8 +648,6 @@ export default function KnowledgeBaseDashboard() {
 
     if (editDraft.cardTitle !== card.title) return true;
     if (editDraft.description !== card.description) return true;
-    if (editDraft.articleTitle !== art.title) return true;
-    if (editDraft.intro !== art.intro) return true;
 
     const aSecs = art.sections ?? [];
     const dSecs = editDraft.sections ?? [];
@@ -738,34 +729,6 @@ export default function KnowledgeBaseDashboard() {
         field: "card.description",
         before: prevCard.description ?? "",
         after: editDraft.description ?? "",
-      });
-    }
-
-    if ((editDraft.articleTitle ?? "") !== (prevArt.title ?? "")) {
-      newEntries.push({
-        id: makeId(),
-        at: Date.now(),
-        user: currentUser.name,
-        role: currentUser.role,
-        cardTitle: nextTitle,
-        sectionHeading: "(Card)",
-        field: "article.title",
-        before: prevArt.title ?? "",
-        after: editDraft.articleTitle ?? "",
-      });
-    }
-
-    if ((editDraft.intro ?? "") !== (prevArt.intro ?? "")) {
-      newEntries.push({
-        id: makeId(),
-        at: Date.now(),
-        user: currentUser.name,
-        role: currentUser.role,
-        cardTitle: nextTitle,
-        sectionHeading: "(Card)",
-        field: "article.intro",
-        before: prevArt.intro ?? "",
-        after: editDraft.intro ?? "",
       });
     }
 
@@ -887,8 +850,6 @@ export default function KnowledgeBaseDashboard() {
     // Apply article updates (and rename key if needed)
     setContentByTitle((prev) => {
       const nextArticle = {
-        title: editDraft.articleTitle,
-        intro: editDraft.intro,
         sections: editDraft.sections.map((s) => ({
           heading: s.heading,
           body: s.body,
@@ -947,7 +908,6 @@ export default function KnowledgeBaseDashboard() {
       let haystack = (c.title + " " + c.description).toLowerCase();
 
       if (article) {
-        haystack += " " + (article.title || "") + " " + (article.intro || "");
         for (const s of article.sections || []) {
           haystack += " " + (s.heading || "") + " " + (s.body || "");
           for (const sub of s.subsections || []) {
@@ -1213,22 +1173,6 @@ export default function KnowledgeBaseDashboard() {
                     className="bg-slate-900/40 border-slate-700 text-slate-100"
                   />
                 </div>
-                <div>
-                  <div className="text-xs text-slate-400 mb-1">Article Title</div>
-                  <Input
-                    value={editDraft.articleTitle}
-                    onChange={(e) => setEditDraft((p) => (p ? { ...p, articleTitle: e.target.value } : p))}
-                    className="bg-slate-900/40 border-slate-700 text-slate-100"
-                  />
-                </div>
-                <div>
-                  <div className="text-xs text-slate-400 mb-1">Intro</div>
-                  <Input
-                    value={editDraft.intro}
-                    onChange={(e) => setEditDraft((p) => (p ? { ...p, intro: e.target.value } : p))}
-                    className="bg-slate-900/40 border-slate-700 text-slate-100"
-                  />
-                </div>
               </div>
 
               <div className="mt-4">
@@ -1273,7 +1217,7 @@ export default function KnowledgeBaseDashboard() {
                           placeholder="Section heading"
                         />
                         <button
-                          className="shrink-0 p-2 rounded-lg border border-slate-700 bg-slate-900/40 hover:border-red-400"
+                          className="ml-auto shrink-0 p-2 rounded-lg border border-slate-700 bg-slate-900/40 hover:border-red-400"
                           onClick={() => {
                             const ok = window.confirm("Remove this section?");
                             if (!ok) return;
@@ -1349,7 +1293,7 @@ export default function KnowledgeBaseDashboard() {
                                   placeholder="Subheading"
                                 />
                                 <button
-                                  className="shrink-0 p-2 rounded-lg border border-slate-700 bg-slate-900/40 hover:border-red-400"
+                                  className="ml-auto shrink-0 p-2 rounded-lg border border-slate-700 bg-slate-900/40 hover:border-red-400"
                                   onClick={() => {
                                     const ok = window.confirm("Remove this subsection?");
                                     if (!ok) return;
@@ -1795,11 +1739,6 @@ export default function KnowledgeBaseDashboard() {
                       {/* Content */}
                       {showInline ? (
                         <div className="mt-2 pt-3 border-t border-slate-600 group-hover:border-slate-500">
-                          <div>
-                            <div className="text-sm font-semibold text-blue-300">{content.title}</div>
-                            <div className="text-xs text-slate-400 mt-1">{content.intro}</div>
-                          </div>
-
                           <div className="mt-3 space-y-4 text-sm">
                             {selectedSectionIndex === null ? null : (() => {
                               const section = content.sections[selectedSectionIndex];
