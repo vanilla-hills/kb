@@ -1013,7 +1013,7 @@ export default function KnowledgeBaseDashboard() {
       {/* Sidebar */}
       <aside className="w-full md:w-72 bg-slate-950 border-b md:border-b-0 md:border-r border-slate-800 p-4 flex flex-col gap-4">
         <div>
-          <h1 className="text-xl font-semibold text-blue-400">Justice Program KB</h1>
+          <h1 className="text-xl font-semibold text-blue-400">DRC Wiki</h1>
           <p className="text-xs text-slate-500 mt-1">Browse by category</p>
 
           {/* Mobile: compact grid. Desktop: stacked list */}
