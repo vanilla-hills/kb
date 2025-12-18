@@ -7,7 +7,25 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function getProfile(id) {
   if (!id) return null;
-  const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single();
+
+  // Use maybeSingle() so "0 rows" is not treated as an error.
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+
   if (error) return null;
-  return data;
+  if (data) return data;
+
+  // If the profile row doesn't exist yet (e.g., older users created before trigger),
+  // create a default one. RLS policy should allow INSERT for the authenticated user.
+  const { data: inserted, error: insertError } = await supabase
+    .from('profiles')
+    .insert({ id })
+    .select('*')
+    .single();
+
+  if (insertError) return null;
+  return inserted;
 }
