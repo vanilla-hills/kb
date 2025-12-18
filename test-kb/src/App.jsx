@@ -1433,7 +1433,7 @@ export default function KnowledgeBaseDashboard() {
               <Input
                 value={changeQuery}
                 onChange={(e) => setChangeQuery(e.target.value)}
-                className="bg-transparent border-0 text-slate-100 placeholder-slate-400 focus:ring-0"
+                className="flex-1 min-w-0 w-full bg-transparent border-0 text-slate-100 placeholder-slate-400 focus:ring-0"
                 placeholder="Filter changes..."
               />
             </div>
@@ -1445,7 +1445,7 @@ export default function KnowledgeBaseDashboard() {
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="bg-transparent border-0 text-slate-100 placeholder-slate-400 focus:ring-0"
+                className="flex-1 min-w-0 w-full bg-transparent border-0 text-slate-100 placeholder-slate-400 focus:ring-0"
                 placeholder="Search topics or keywords..."
               />
             </div>
