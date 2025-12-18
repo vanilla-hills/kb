@@ -9,9 +9,17 @@ export default function AuthSplash() {
   async function sendMagicLink() {
     setLoading(true);
     setMessage(null);
-    // Ensure the magic link redirects back to the current origin (production or preview)
-    const redirectTo = window.location.origin;
-    const { error } = await supabase.auth.signInWithOtp({ email }, { redirectTo });
+    // Ensure the magic link redirects back to the desired origin.
+    // Prefer a configured env var (useful for testing), otherwise use current origin.
+    const redirectTo = import.meta.env.VITE_SUPABASE_REDIRECT || window.location.origin;
+    console.log('Sending magic link, redirectTo=', redirectTo);
+    // NOTE: Supabase expects the redirect under `options.emailRedirectTo`.
+    // Passing `{ redirectTo }` as a second argument is ignored and causes Supabase
+    // to fall back to the project's default Site URL.
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: redirectTo },
+    });
     setLoading(false);
     if (error) setMessage(error.message);
     else setMessage('Magic link sent — check your email. The link will return you to this site.');

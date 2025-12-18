@@ -93,8 +93,6 @@ export default function KnowledgeBaseDashboard() {
     };
   }, []);
 
-  if (!authUser) return <AuthSplash />;
-
   // ---------- NAV ----------
   const navItems = [
     { key: "dashboard", label: "Dashboard", icon: LayoutGrid },
@@ -1007,6 +1005,8 @@ export default function KnowledgeBaseDashboard() {
       return matches(hay);
     });
   }, [changeLog, changeQuery, changeRoleFilter, changeCardFilter, changeTimeFilter]);
+
+  if (!authUser) return <AuthSplash />;
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col md:flex-row">
