@@ -1258,7 +1258,7 @@ export default function KnowledgeBaseDashboard() {
                 <div className="mt-3 max-h-[55vh] overflow-y-auto pr-1 space-y-3">
                   {editDraft.sections.map((s, sIdx) => (
                     <div key={sIdx} className="rounded-xl bg-slate-900/30 border border-slate-800 p-3">
-                      <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
                         <Input
                           value={s.heading}
                           onChange={(e) =>
@@ -1269,11 +1269,11 @@ export default function KnowledgeBaseDashboard() {
                               return { ...p, sections: next };
                             })
                           }
-                          className="bg-slate-900/40 border-slate-700 text-slate-100"
+                          className="flex-1 min-w-0 w-full bg-slate-900/40 border-slate-700 text-slate-100"
                           placeholder="Section heading"
                         />
                         <button
-                          className="p-2 rounded-lg border border-slate-700 bg-slate-900/40 hover:border-red-400"
+                          className="shrink-0 p-2 rounded-lg border border-slate-700 bg-slate-900/40 hover:border-red-400"
                           onClick={() => {
                             const ok = window.confirm("Remove this section?");
                             if (!ok) return;
@@ -1345,11 +1345,11 @@ export default function KnowledgeBaseDashboard() {
                                       return { ...p, sections: next };
                                     })
                                   }
-                                  className="bg-slate-900/40 border-slate-700 text-slate-100"
+                                  className="flex-1 min-w-0 w-full bg-slate-900/40 border-slate-700 text-slate-100"
                                   placeholder="Subheading"
                                 />
                                 <button
-                                  className="p-2 rounded-lg border border-slate-700 bg-slate-900/40 hover:border-red-400"
+                                  className="shrink-0 p-2 rounded-lg border border-slate-700 bg-slate-900/40 hover:border-red-400"
                                   onClick={() => {
                                     const ok = window.confirm("Remove this subsection?");
                                     if (!ok) return;
