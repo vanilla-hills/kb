@@ -1,0 +1,9 @@
+{
+  "name": "kb-root",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix test-kb run dev",
+    "build": "npm --prefix test-kb ci && npm --prefix test-kb run build",
+    "lint": "npm --prefix test-kb run lint"
+  }
+}
