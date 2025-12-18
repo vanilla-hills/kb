@@ -1156,21 +1156,25 @@ export default function KnowledgeBaseDashboard() {
 
               {editError ? <div className="mt-3 text-sm text-red-300">{editError}</div> : null}
 
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="mt-4 space-y-3">
                 <div>
                   <div className="text-xs text-slate-400 mb-1">Card Title</div>
                   <Input
                     value={editDraft.cardTitle}
                     onChange={(e) => setEditDraft((p) => (p ? { ...p, cardTitle: e.target.value } : p))}
-                    className="bg-slate-900/40 border-slate-700 text-slate-100"
+                    className="w-full bg-slate-900/40 border-slate-700 text-slate-100"
                   />
                 </div>
+
                 <div>
                   <div className="text-xs text-slate-400 mb-1">Card Description</div>
-                  <Input
+                  <textarea
+                    className="w-full rounded-lg bg-slate-900/40 border border-slate-700 p-2 text-sm text-slate-100 focus:outline-none focus:border-blue-400"
+                    rows={3}
                     value={editDraft.description}
-                    onChange={(e) => setEditDraft((p) => (p ? { ...p, description: e.target.value } : p))}
-                    className="bg-slate-900/40 border-slate-700 text-slate-100"
+                    onChange={(e) =>
+                      setEditDraft((p) => (p ? { ...p, description: e.target.value } : p))
+                    }
                   />
                 </div>
               </div>
