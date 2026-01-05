@@ -1,51 +1,59 @@
 import React, { useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { Lock } from 'lucide-react';
 
-export default function AuthSplash() {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
+export default function AuthSplash({ onLogin }) {
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(false);
 
-  async function sendMagicLink() {
-    setLoading(true);
-    setMessage(null);
-    // Ensure the magic link redirects back to the desired origin.
-    // Prefer a configured env var (useful for testing), otherwise use current origin.
-    const redirectTo = import.meta.env.VITE_SUPABASE_REDIRECT || window.location.origin;
-    console.log('Sending magic link, redirectTo=', redirectTo);
-    // NOTE: Supabase expects the redirect under `options.emailRedirectTo`.
-    // Passing `{ redirectTo }` as a second argument is ignored and causes Supabase
-    // to fall back to the project's default Site URL.
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: redirectTo },
-    });
-    setLoading(false);
-    if (error) setMessage(error.message);
-    else setMessage('Magic link sent — check your email. The link will return you to this site.');
-  }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (password === '12345') {
+      onLogin();
+    } else {
+      setError(true);
+      setPassword('');
+    }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-md p-6 bg-white rounded shadow">
-        <h2 className="text-xl font-semibold mb-4">Sign in</h2>
-        <label className="block mb-2">Email</label>
-        <input
-          className="w-full p-2 border rounded mb-3"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@your.org"
-        />
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+      <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-8">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/10 mb-4">
+            <Lock className="w-8 h-8 text-blue-400" />
+          </div>
+          <h1 className="text-2xl font-bold text-white mb-2">Restricted Access</h1>
+          <p className="text-slate-400">Please enter the password to continue.</p>
+        </div>
 
-        <button
-          className="w-full bg-blue-600 text-white py-2 rounded mb-3"
-          onClick={sendMagicLink}
-          disabled={loading || !email}
-        >
-          {loading ? 'Sending…' : 'Send magic link'}
-        </button>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError(false);
+              }}
+              placeholder="Enter Password"
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-center tracking-widest"
+              autoFocus
+            />
+          </div>
 
-        {message && <p className="mt-4 text-sm">{message}</p>}
+          {error && (
+            <p className="text-red-400 text-sm text-center animate-pulse">
+              Incorrect password
+            </p>
+          )}
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 rounded-lg transition-colors shadow-lg shadow-blue-900/20"
+          >
+            Unlock
+          </button>
+        </form>
       </div>
     </div>
   );
